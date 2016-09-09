@@ -6,6 +6,7 @@ var unique = require('unique-stream');
 
 var glob = require('glob');
 var resolveGlob = require('to-absolute-glob');
+var isNegatedGlob = require('is-negated-glob');
 var globParent = require('glob-parent');
 var path = require('path');
 var extend = require('extend');
@@ -94,16 +95,17 @@ var gs = {
     var ourOpt = extend({}, opt);
     delete ourOpt.root;
 
-    globs.forEach(function(glob, index) {
-      if (typeof glob !== 'string') {
+    globs.forEach(function(globString, index) {
+      if (typeof globString !== 'string') {
         throw new Error('Invalid glob at index ' + index);
       }
 
-      var globArray = isNegative(glob) ? negatives : positives;
+      var glob = isNegatedGlob(globString);
+      var globArray = glob.negated ? negatives : positives;
 
       globArray.push({
         index: index,
-        glob: glob,
+        glob: glob.pattern,
       });
     });
 
@@ -132,19 +134,11 @@ var gs = {
 
     function streamFromPositive(positive) {
       var negativeGlobs = negatives.filter(indexGreaterThan(positive.index))
-        .map(toGlob)
-        .map(stripExclamationMark);
+        .map(toGlob);
       return gs.createStream(positive.glob, negativeGlobs, opt);
     }
   },
 };
-
-
-function isNegative(pattern) {
-  if (typeof pattern === 'string') {
-    return pattern[0] === '!';
-  }
-}
 
 function indexGreaterThan(index) {
   return function(obj) {
@@ -181,10 +175,6 @@ function getBasePath(ourGlob, opt) {
     basePath += path.sep;
   }
   return basePath;
-}
-
-function stripExclamationMark(glob) {
-  return glob.slice(1);
 }
 
 module.exports = gs;
