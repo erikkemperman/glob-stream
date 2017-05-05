@@ -8,6 +8,7 @@ var Readable = require('readable-stream').Readable;
 var globParent = require('glob-parent');
 var toAbsoluteGlob = require('to-absolute-glob');
 var removeTrailingSeparator = require('remove-trailing-separator');
+var File = require('vinyl');
 
 var globErrMessage1 = 'File not found with singular glob: ';
 var globErrMessage2 = ' (if this was purposeful, use `allowEmpty` option)';
@@ -69,11 +70,11 @@ function GlobStream(ourGlob, negatives, opt) {
 
   globber.on('match', function(filepath) {
     found = true;
-    var obj = {
+    var obj = new File({
       cwd: cwd,
       base: basePath,
       path: removeTrailingSeparator(filepath),
-    };
+    });
     if (!self.push(obj)) {
       globber.pause();
     }

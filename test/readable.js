@@ -2,6 +2,7 @@
 
 var expect = require('expect');
 var miss = require('mississippi');
+var File = require('vinyl');
 
 var stream = require('../readable');
 
@@ -44,11 +45,11 @@ describe('readable stream', function() {
   });
 
   it('does not throw an error if you push to it', function(done) {
-    var stub = {
+    var stub = new File({
       cwd: dir,
       base: dir,
       path: dir,
-    };
+    });
 
     var gs = stream('./fixtures/test.coffee', [], { cwd: dir });
 
@@ -66,11 +67,11 @@ describe('readable stream', function() {
   });
 
   it('accepts a file path', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toBe(1);
@@ -85,21 +86,21 @@ describe('readable stream', function() {
 
   it('accepts a glob', function(done) {
     var expected = [
-      {
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/has (parens)/test.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/stuff/run.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/stuff/test.dmc',
-      },
+      }),
     ];
 
     function assert(pathObjs) {

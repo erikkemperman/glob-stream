@@ -35,7 +35,8 @@
     "readable-stream": "^2.1.5",
     "remove-trailing-separator": "^1.0.1",
     "to-absolute-glob": "^2.0.0",
-    "unique-stream": "^2.0.2"
+    "unique-stream": "^2.0.2",
+    "vinyl": "^2.0.2"
   },
   "devDependencies": {
     "eslint": "^1.10.3",

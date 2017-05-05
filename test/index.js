@@ -2,6 +2,7 @@
 
 var expect = require('expect');
 var miss = require('mississippi');
+var File = require('vinyl');
 
 var globStream = require('../');
 
@@ -18,11 +19,11 @@ var dir = deWindows(__dirname);
 describe('glob-stream', function() {
 
   it('streams a single object when given a directory path', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/whatsgoingon',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -36,11 +37,11 @@ describe('glob-stream', function() {
   });
 
   it('streams a single object when given a file path', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -54,11 +55,11 @@ describe('glob-stream', function() {
   });
 
   it('streams only objects with directory paths when given a directory glob', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures/whatsgoingon',
       path: dir + '/fixtures/whatsgoingon/hey',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -72,11 +73,11 @@ describe('glob-stream', function() {
   });
 
   it('streams only objects with file paths from a non-directory glob', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -92,11 +93,11 @@ describe('glob-stream', function() {
   it('properly handles ( ) in cwd path', function(done) {
     var cwd = dir + '/fixtures/has (parens)';
 
-    var expected = {
+    var expected = new File({
       cwd: cwd,
       base: cwd,
       path: cwd + '/test.dmc',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -110,11 +111,11 @@ describe('glob-stream', function() {
   });
 
   it('sets the correct base when ( ) in glob', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures/has (parens)',
       path: dir + '/fixtures/has (parens)/test.dmc',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -129,21 +130,21 @@ describe('glob-stream', function() {
 
   it('finds files in paths that contain ( ) when they match the glob', function(done) {
     var expected = [
-      {
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/has (parens)/test.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/stuff/run.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/stuff/test.dmc',
-      },
+      }),
     ];
 
     function assert(pathObjs) {
@@ -186,21 +187,21 @@ describe('glob-stream', function() {
     var base = dir + '/fixtures';
 
     var expected = [
-     {
+      new File({
         cwd: base,
         base: base,
         path: base + '/whatsgoingon/hey/isaidhey/whatsgoingon/test.txt',
-      },
-      {
+      }),
+      new File({
         cwd: base,
         base: base,
         path: base + '/test.coffee',
-      },
-      {
+      }),
+      new File({
         cwd: base,
         base: base,
         path: base + '/whatsgoingon/test.js',
-      },
+      }),
     ];
 
     var paths = [
@@ -224,21 +225,21 @@ describe('glob-stream', function() {
     var base = dir + '/fixtures';
 
     var expected = [
-     {
+      new File({
         cwd: base,
         base: base,
         path: base + '/whatsgoingon/hey/isaidhey/whatsgoingon/test.txt',
-      },
-      {
+      }),
+      new File({
         cwd: base,
         base: base,
         path: base + '/test.coffee',
-      },
-      {
+      }),
+      new File({
         cwd: base,
         base: base,
         path: base + '/whatsgoingon/test.js',
-      },
+      }),
     ];
 
     var paths = [
@@ -260,31 +261,31 @@ describe('glob-stream', function() {
 
   it('properly orders objects when given multiple globs with globstars', function(done) {
     var expected = [
-     {
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/whatsgoingon/hey/isaidhey/whatsgoingon/test.txt',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/test.coffee',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/whatsgoingon/test.js',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/has (parens)/test.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures',
         path: dir + '/fixtures/stuff/test.dmc',
-      },
+      }),
     ];
 
     var globs = [
@@ -307,21 +308,21 @@ describe('glob-stream', function() {
 
   it('properly orders objects when given multiple absolute paths and no cwd', function(done) {
     var expected = [
-     {
+      new File({
         cwd: process.cwd(),
         base: dir + '/fixtures/whatsgoingon/hey/isaidhey/whatsgoingon',
         path: dir + '/fixtures/whatsgoingon/hey/isaidhey/whatsgoingon/test.txt',
-      },
-      {
+      }),
+      new File({
         cwd: process.cwd(),
         base: dir + '/fixtures',
         path: dir + '/fixtures/test.coffee',
-      },
-      {
+      }),
+      new File({
         cwd: process.cwd(),
         base: dir + '/fixtures/whatsgoingon',
         path: dir + '/fixtures/whatsgoingon/test.js',
-      },
+      }),
     ];
 
     var paths = [
@@ -342,11 +343,11 @@ describe('glob-stream', function() {
   });
 
   it('removes duplicate objects from the stream using default (path) filter', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -360,11 +361,11 @@ describe('glob-stream', function() {
   });
 
   it('removes duplicate objects from the stream using custom string filter', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures/stuff',
       path: dir + '/fixtures/stuff/run.dmc',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -379,16 +380,16 @@ describe('glob-stream', function() {
 
   it('removes duplicate objects from the stream using custom function filter', function(done) {
     var expected = [
-      {
+      new File({
         cwd: dir,
         base: dir + '/fixtures/stuff',
         path: dir + '/fixtures/stuff/run.dmc',
-      },
-      {
+      }),
+      new File({
         cwd: dir,
         base: dir + '/fixtures/stuff',
         path: dir + '/fixtures/stuff/test.dmc',
-      },
+      }),
     ];
 
     var uniqueBy = function(data) {
@@ -419,11 +420,11 @@ describe('glob-stream', function() {
   });
 
   it('finds dotfiles with dot option', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/.swag',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -448,11 +449,11 @@ describe('glob-stream', function() {
   });
 
   it('respects pause/resume', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -473,11 +474,11 @@ describe('glob-stream', function() {
   });
 
   it('works with direct paths and no cwd', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: process.cwd(),
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -491,11 +492,11 @@ describe('glob-stream', function() {
   });
 
   it('supports negative globs', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: process.cwd(),
       base: dir + '/fixtures/stuff',
       path: dir + '/fixtures/stuff/run.dmc',
-    };
+    });
 
     var globs = [
       dir + '/fixtures/stuff/*.dmc',
@@ -514,11 +515,11 @@ describe('glob-stream', function() {
   });
 
   it('supports negative file paths', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: process.cwd(),
       base: dir + '/fixtures/stuff',
       path: dir + '/fixtures/stuff/run.dmc',
-    };
+    });
 
     var paths = [
       dir + '/fixtures/stuff/*.dmc',
@@ -548,11 +549,11 @@ describe('glob-stream', function() {
   });
 
   it('respects order of negative globs', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures/stuff',
       path: dir + '/fixtures/stuff/run.dmc',
-    };
+    });
 
     var globs = [
       './fixtures/stuff/*',
@@ -572,11 +573,11 @@ describe('glob-stream', function() {
   });
 
   it('ignores leading negative globs', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: dir,
       base: dir + '/fixtures/stuff',
       path: dir + '/fixtures/stuff/run.dmc',
-    };
+    });
 
     var globs = [
       '!./fixtures/stuff/*.dmc',
@@ -667,11 +668,11 @@ describe('glob-stream', function() {
   });
 
   it('resolves absolute paths when root option is given', function(done) {
-    var expected = {
+    var expected = new File({
       cwd: process.cwd(),
       base: dir + '/fixtures',
       path: dir + '/fixtures/test.coffee',
-    };
+    });
 
     function assert(pathObjs) {
       expect(pathObjs.length).toEqual(1);
@@ -742,11 +743,11 @@ describe('options', function() {
   describe('ignore', function() {
 
     it('accepts a string (in addition to array)', function(done) {
-      var expected = {
+      var expected = new File({
         cwd: dir,
         base: dir + '/fixtures/stuff',
         path: dir + '/fixtures/stuff/run.dmc',
-      };
+      });
 
       function assert(pathObjs) {
         expect(pathObjs.length).toEqual(1);
@@ -760,11 +761,11 @@ describe('options', function() {
     });
 
     it('supports the ignore option instead of negation', function(done) {
-      var expected = {
+      var expected = new File({
         cwd: dir,
         base: dir + '/fixtures/stuff',
         path: dir + '/fixtures/stuff/run.dmc',
-      };
+      });
 
       function assert(pathObjs) {
         expect(pathObjs.length).toEqual(1);
